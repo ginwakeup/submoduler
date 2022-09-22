@@ -1,7 +1,7 @@
 import unittest
 import os
+import uuid
 
-import git
 from git import Repo, Git
 
 from submoduler import submoduler
@@ -17,7 +17,7 @@ class TestsBase(unittest.TestCase):
     git_ssh_identity_file = os.path.expanduser('~/.ssh/id_ed25519')  # TODO: support different location with env.
     git_ssh_cmd = 'ssh -i %s' % git_ssh_identity_file
 
-    def test_a01_update(self):
+    def test_a01_submodule_update(self):
         """Simple test that pushes a change to a repo and checks if its submodule is updated on another repository."""
         # First we cache the content of the test_repo_b/test_repo_a/README.
         with Git().custom_environment(
@@ -27,22 +27,19 @@ class TestsBase(unittest.TestCase):
 
             self.REPO_A.git.fetch()
 
-            with open(self.README_A_PATH, "r+") as readme_a_file:
-                with open(self.README_B_A_PATH, "r") as readme_b_file:
-                    repo_a_readme = readme_a_file.read()
+            with open(self.README_A_PATH, "w") as readme_a_file:
+                uid = str(uuid.uuid1())
+                readme_a_file.write(uid)
+            self.REPO_A.index.add(self.README_A_PATH)
+            self.REPO_A.index.commit("README unittest change.")
+            self.REPO_A.remote().push()
 
-                    # Update the submodule.
-                    self.SM.update_repos()
+            # Update the submodule.
+            self.SM.update_repos()
 
-                    repo_b_repo_a_submodule_readme = readme_b_file.read()
+            with open(self.README_B_A_PATH, "r") as readme_b_file:
+                repo_b_repo_a_submodule_readme = readme_b_file.read()
 
-                    #self.assertEqual(repo_a_readme, repo_b_repo_a_submodule_readme)
-
-                    readme_a_file.write("Change")
-
-                    self.REPO_A.index.add(self.README_A_PATH)
-                    self.REPO_A.index.commit("README unittest change.")
-                    self.REPO_A.remote().push()
-                    commits = list(self.REPO_A.iter_commits('dev'))
+                self.assertEqual(uid, repo_b_repo_a_submodule_readme)
 
 
