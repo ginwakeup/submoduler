@@ -1,29 +1,80 @@
+import os
+import time
+import threading
+
+from urllib.request import urlopen
+
 from git import Repo
+from loguru import logger
+from dacite import from_dict
+
+from repo_meta import RepoMeta
 
 
 class Submoduler:
     """Core class with the only responsibility to parse repositories and perform the Git Operations."""
-    def __init__(self, repos: list[str]):
+    def __init__(self, configuration: dict):
         """Init.
 
         Args:
-            repos: list of repos. This could be:
-                - a list of local paths. In this case the file will expect a .git file in the path.
-                - a list of URLs for the repos. The tool will clone the repos in a temp location.
-                - a directory with git repos living under it. The tool will parse the entire tree to find them.
+            configuration: a dictionary configuration object.
+                The configuration can contain the following keys:
+                    - repos: a list of repos. Each entry in repos could be:
+                        - a local git repository.
+                        - a git URL. In this case, the tool pulls the repository in a temp location.
+                        - a root directory in which live multiple git repositories. The tool will iterate all of them and
+                        update their submodules.
+                    - interval: in seconds, what's the scan/update interval.
         """
-        self._repos_paths = repos
-        self._repos: list[Repo] = []
+        self._interval = configuration.get("interval")
+        logger.info(f"Interval set to {self._interval}")
+
+        self._repos_paths = configuration.get("repos")
+        self._repos: list[RepoMeta] = []
         self._parse_repos()
+        self._start()
 
     def _parse_repos(self):
-        """Parse the repositories used to initialize the class instance and stores git.Repo objects inside self._repos."""
-        # TODO: support all cases.
-        for repo in self._repos_paths:
-            # For the moment we only support local paths.
-            self._repos.append(Repo(repo))
+        """Parse repositories listed in the configuration and populate self._repos GitPython Repo objects."""
+        for repo_name, repo_meta in self._repos_paths.items():
+            repo_path = repo_meta.get("path")
+            if os.path.isdir(repo_path):
+                repo = Repo(repo_path)
+                repo_name = repo.working_tree_dir.split("/")[-1]
+                repo_meta_class = from_dict(RepoMeta, repo_meta)
+                repo_meta_class.name = repo_name
+                repo_meta_class.repo = repo
 
-    def update_repos(self):
-        """Repositories update fuction. When this is executed, the repos are iterated and all the submodules are updated to the latest commit."""
+                self._repos.append(repo_meta_class)
+                continue
+
+            # Not a local path, check if it's a URL
+            try:
+                # TODO: complete implementation for URLs.
+                urlopen(repo_path)
+                self._repos.append(Repo(repo_path))
+                continue
+
+            except ValueError:
+                pass
+
+            # Not a URL, unknown format.
+            logger.warning(f"Couldn't recognize a format for path: {repo_path}")
+
+    def _start(self):
+        """Starts a thread for each repository to update its submodules."""
         for repo in self._repos:
-            repo.submodule_update(to_latest_revision=True)
+            thread = threading.Thread(target=self._update_repo, args=(repo,), daemon=True)
+            thread.start()
+            thread.join()
+
+    def _update_repo(self, repo_meta: RepoMeta):
+        """Performs the update operation on the repository submodules.
+
+        Args:
+            repo_meta: RepoMeta object to update.
+        """
+        while True:
+            repo_meta.repo.submodule_update(to_latest_revision=True)
+            logger.info(f"Submodules updated for {repo_meta.name}")
+            time.sleep(self._interval)
