@@ -1,12 +1,13 @@
 repos:
-  0:
-    path: /Users/Iacopo/Documents/GitHub/test_repo_b
+  test_repo_a:
+    path: /Users/Iacopo/Documents/GitHub/test_repo_a
     to_latest_revision: true
     init: true
     force_reset: true
     recursive: true
-  1:
-    path: https://github.com/test-org-iacopo/test_repo_b.git
+
+  test_repo_b:
+    path: git@github.com:test-org-iacopo/test_repo_b.git
     to_latest_revision: true
     init: true
     force_reset: true

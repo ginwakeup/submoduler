@@ -9,5 +9,7 @@ class RepoMeta:
     """Metadata class for a repository."""
     name: Optional[str]
     path: Optional[str]
+    local_path: Optional[str]
     to_latest_revision: Optional[bool]
     repo: Optional[Repo]
+    commit_message: Optional[str]
