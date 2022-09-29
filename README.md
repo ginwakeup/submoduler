@@ -1,4 +1,6 @@
 # submoduler
+![Alt text](resources/gh/header.png?raw=true "Submoduler")
+
 An app that iterates a list of repositories and updates each of their submodules to the latest commit.
 
 # TODOs
