@@ -1,4 +1,6 @@
 # submoduler
+![Alt text](resources/gh/header.png?raw=true "Submoduler")
+
 An app that iterates a list of repositories and updates each of their submodules to the latest commit.
 
 # TODOs
@@ -12,11 +14,14 @@ An app that iterates a list of repositories and updates each of their submodules
 
 ## Run the Docker Image
 
-Pass your `PAT` and Username as environment variables:
+Pull image:
+`docker pull ghcr.io/ginwakeup/submoduler:latest`
+
+Run it and pass your `PAT` and Username as environment variables:
 
 `docker run -e PAT=<your_PAT_here> -e USER=<your_username_here> -v <yaml_config_host_path_here>:/opt/submoduler.yaml <tag_here>`
 
-## Run as a Pytho App
+## Run as a Python App
 
 Submoduler can be executed as a simple Python App.
 
