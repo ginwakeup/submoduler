@@ -2,11 +2,6 @@
 ![Alt text](resources/gh/header.png?raw=true "Submoduler")
 
 An app that iterates a list of repositories and updates each of their submodules to the latest commit.
-
-# TODOs
-
-- [x] Run Process for 1 or more repositories using HTTPS and PAT.
-- [ ] Run process for entire organization.
    
 ## Build the Docker Image
 
@@ -52,4 +47,17 @@ interval: 3
   - **init**: if not initialised, init the submodules.
   - **force_reset**: remove any local change and force reset on the submodules.
   - **recursive**: update the children submodules.
+- organization: this key can contain a organization name and configuration for submoduler.
+  e.g.
+  ```yaml
+  organization:
+    test-org-name:
+      to_latest_revision: true
+      init: true
+      force_reset: true
+      recursive: true
+  interval: 3
+  ```
+  When specifying a Organization, all the repos living under it will be pulled and monitored/updated.
+  Right now, only one Submoduler Configuration is supported for all the Org repos, and only 1 repo is supported.
 - **interval**: this defines how often the check is performed on your repository submodules in seconds.
