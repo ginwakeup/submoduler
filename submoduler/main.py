@@ -1,9 +1,7 @@
 import click
 import os
-import auth
 
 from loguru import logger
-from git import Git
 from yaml import load, Loader
 
 from submoduler import Submoduler
@@ -13,7 +11,16 @@ from submoduler import Submoduler
 @click.option('--config_path',
               help="Path to the configuration file. This supports relative path, e.g.: ../submoduler.yaml.",
               default="/opt/submoduler.yaml")
-def launch(config_path):
+@click.option('--user',
+              help="Username.",
+              default=os.environ.get("USER"))
+@click.option('--email',
+              help="User Email.",
+              default=os.environ.get("EMAIL", ""))
+@click.option('--pat',
+              help="User Email.",
+              default=os.environ.get("PAT"))
+def launch(config_path, user, email, pat):
     config_path = os.path.abspath(config_path)
 
     logger.info("Starting submoduler")
@@ -21,9 +28,10 @@ def launch(config_path):
         with open(config_path, "r") as config_stream:
             config_data = load(config_stream, Loader=Loader)
 
-        Submoduler(config_data)
+        Submoduler(config_data, user, pat, email)
 
-    except FileNotFoundError:
+    except FileNotFoundError as error:
+        logger.error(error)
         logger.error(f"Specified config file not found at: {config_path}.")
         return
 
