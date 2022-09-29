@@ -4,7 +4,7 @@ on:
   push:
     branches: ["main"]
     paths: 
-      - 'submoduler'
+      - 'submoduler/**'
       
   pull_request:
     types:
