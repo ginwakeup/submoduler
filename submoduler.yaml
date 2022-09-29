@@ -1,8 +1,0 @@
-repos:
-  test_repo_b:
-    url: https://github.com/test-org-iacopo/test_repo_b.git
-    to_latest_revision: true
-    init: true
-    force_reset: true
-    recursive: true
-interval: 3
