@@ -3,7 +3,9 @@ name: Deploy
 on:
   push:
     branches: ["main"]
-
+    paths: 
+      - 'submoduler'
+      
   pull_request:
     types:
       - "closed"
