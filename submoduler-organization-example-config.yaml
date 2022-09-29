@@ -1,6 +1,5 @@
-repos:
-  test_repo:
-    url: https://github.com/<your_username>/<repo_name>.git
+organization:
+  test-org-name:
     to_latest_revision: true
     init: true
     force_reset: true
