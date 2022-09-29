@@ -1,0 +1,5 @@
+click
+pyyaml
+loguru
+GitPython
+dacite
