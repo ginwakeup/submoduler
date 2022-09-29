@@ -18,7 +18,7 @@ Pass your `PAT` and Username as environment variables:
 
 `docker run -e PAT=<your_PAT_here> -e USER=<your_username_here> -v <yaml_config_host_path_here>:/opt/submoduler.yaml <tag_here>`
 
-## Run as a Pytho App
+## Run as a Python App
 
 Submoduler can be executed as a simple Python App.
 
