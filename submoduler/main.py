@@ -9,7 +9,7 @@ from submoduler import Submoduler
 
 @click.command
 @click.option('--config_path',
-              help="Path to the configuration file. This supports relative path, e.g.: ../submoduler.yaml.",
+              help="Path to the configuration file. This supports relative path, e.g.: ../submoduler-example-config.yaml.",
               default="/opt/submoduler.yaml")
 @click.option('--user',
               help="Username.",
