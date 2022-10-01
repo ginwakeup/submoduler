@@ -1,6 +1,9 @@
 # submoduler
 ![Alt text](resources/gh/header.png?raw=true "Submoduler")
 
+Managing git submodules can be tricky.
+What Submoduler tries to do is a simple management layer that keeps them updated in multiple repositories/organization repositories.
+
 An app that iterates a list of repositories and updates each of their submodules to the latest commit.
    
 ## Build the Docker Image
